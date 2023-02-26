@@ -16,15 +16,14 @@ fig = plt.figure()
 np.set_printoptions(suppress=True)
 
 # reading distance data
-LiDAR_raw_data_file = open("room1/room1data5.txt", "r")
+LiDAR_raw_data_file = open("room1/room1data6.txt", "r")
 point_distances = np.empty(DataPointsPerScan)
 angles = np.arange(0, 2*np.pi, (2*np.pi / DataPointsPerScan), dtype=float)
-outliers = []
-key_points = []
 for i in range(DataPointsPerScan):
     point_distances[i] = float(LiDAR_raw_data_file.readline().strip())
 
 # determine and remove outliers
+outliers = []
 for i in range(DataPointsPerScan):
     if point_distances[i] == np.inf:
         outliers.append(i)
@@ -65,6 +64,7 @@ for i in range(DataPointsPerScan):
     point_data_y[i - outlierAdjust] = point_distances[i] * np.sin(angles[i])
 
 # calculate distances between points
+# TODO optimize by using previous outlier distances
 point_distances = np.empty(DataPointsPerScanAdjust, dtype=float)
 for i in range(0, DataPointsPerScanAdjust):
     point_distances[i] = math.sqrt(abs(math.pow(point_data_x[i] - point_data_x[i - 1], 2) + math.pow(point_data_y[i] - point_data_y[i - 1], 2)))
@@ -89,21 +89,32 @@ roc_slope_angles = np.empty(DataPointsPerScanAdjust, dtype=float)
 for i in range(DataPointsPerScanAdjust):
     roc_slope_angles[i] = abs(point_angles[i - 1]) - abs(point_angles[i])
 
-# calculate rate of change
+# calculate rate of change of distances
 roc_point_distances = np.empty(DataPointsPerScanAdjust, dtype=float)
 for i in range(DataPointsPerScanAdjust):
     roc_point_distances[i] = abs(point_distances[i - 1] - point_distances[i])
 
-# record key points
+# record and mark key points
+key_points = []
 for i in range(DataPointsPerScanAdjust):
-    if (abs(roc_slope_angles[i]) > np.deg2rad(MinimumAngleChange)) and (not ((i - 2) in outliers)):
+    if (abs(roc_slope_angles[i]) > np.deg2rad(MinimumAngleChange)) and (not ((i - 2) in key_points)):
         key_points.append(i - 2)
-    if (roc_point_distances[i] > MinimumOutlierDistance) and (not ((i - 1) in outliers)):
+        colors[i - 1] = [1, 0, 0]
+        sizes[i - 1] = 50
+    if (roc_point_distances[i] > MinimumOutlierDistance) and (not ((i - 1) in key_points)):
         key_points.append(i - 1)
+        colors[i - 1] = [1, 0, 0]
+        sizes[i - 1] = 50
 
-for i in key_points:
-    colors[i] = [1, 0, 0]
-    sizes[i] = 50
+# convert negative key points to their positive counterparts
+i = 0
+while key_points[i] < 0:
+    key_point = key_points[i]
+    key_points.pop(i)
+    key_points.append(DataPointsPerScanAdjust + key_point)
+    i += 1
+
+
 
 # show plot
 plt.scatter(0, 0, color=[0, 0, 0], s=500)
