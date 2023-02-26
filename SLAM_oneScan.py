@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import statistics
 
 # SLAM options
 
@@ -16,7 +17,7 @@ fig = plt.figure()
 np.set_printoptions(suppress=True)
 
 # reading distance data
-LiDAR_raw_data_file = open("room1/room1data6.txt", "r")
+LiDAR_raw_data_file = open("room1/room1data1.txt", "r")
 point_distances = np.empty(DataPointsPerScan)
 angles = np.arange(0, 2*np.pi, (2*np.pi / DataPointsPerScan), dtype=float)
 for i in range(DataPointsPerScan):
@@ -114,7 +115,22 @@ while key_points[i] < 0:
     key_points.append(DataPointsPerScanAdjust + key_point)
     i += 1
 
+# combine key points into clusters
+key_clusters = []
+keyClusterPoints = []
+if key_points:
+    keyClusterPoints = [key_points[0]]
 
+i = 1
+while i < len(key_points):
+    if abs(keyClusterPoints[-1] - key_points[i]) <= 3:
+        keyClusterPoints.append(key_points[i])
+    else:
+        key_clusters.append(statistics.median_low(keyClusterPoints))
+        keyClusterPoints = [key_points[i]]
+    i += 1
+if keyClusterPoints:
+    key_clusters.append(statistics.median_low(keyClusterPoints))
 
 # show plot
 plt.scatter(0, 0, color=[0, 0, 0], s=500)
