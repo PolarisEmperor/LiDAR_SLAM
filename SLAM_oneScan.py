@@ -17,7 +17,7 @@ fig = plt.figure()
 np.set_printoptions(suppress=True)
 
 # reading distance data
-LiDAR_raw_data_file = open("room1/room1data1.txt", "r")
+LiDAR_raw_data_file = open("room1/data1.txt", "r")
 point_distances = np.empty(DataPointsPerScan)
 angles = np.arange(0, 2*np.pi, (2*np.pi / DataPointsPerScan), dtype=float)
 for i in range(DataPointsPerScan):
@@ -96,16 +96,13 @@ for i in range(DataPointsPerScanAdjust):
     roc_point_distances[i] = abs(point_distances[i - 1] - point_distances[i])
 
 # record and mark key points
+print(roc_point_distances)
 key_points = []
 for i in range(DataPointsPerScanAdjust):
     if (abs(roc_slope_angles[i]) > np.deg2rad(MinimumAngleChange)) and (not ((i - 2) in key_points)):
         key_points.append(i - 2)
-        colors[i - 1] = [1, 0, 0]
-        sizes[i - 1] = 50
     if (roc_point_distances[i] > MinimumOutlierDistance) and (not ((i - 1) in key_points)):
         key_points.append(i - 1)
-        colors[i - 1] = [1, 0, 0]
-        sizes[i - 1] = 50
 
 # convert negative key points to their positive counterparts
 i = 0
@@ -115,22 +112,27 @@ while key_points[i] < 0:
     key_points.append(DataPointsPerScanAdjust + key_point)
     i += 1
 
-# combine key points into clusters
+# combine key points into clusters and display clusters
 key_clusters = []
 keyClusterPoints = []
 if key_points:
     keyClusterPoints = [key_points[0]]
-
 i = 1
+
+# TODO fix algorithm to use distance between two key points not point before it
 while i < len(key_points):
-    if abs(keyClusterPoints[-1] - key_points[i]) <= 3:
+    if (abs(keyClusterPoints[-1] - key_points[i]) <= 3) and (point_distances[key_points[i]] < MinimumOutlierDistance):
         keyClusterPoints.append(key_points[i])
     else:
-        key_clusters.append(statistics.median_low(keyClusterPoints))
+        key_clusters.append([statistics.median_low(keyClusterPoints), len(keyClusterPoints)])
         keyClusterPoints = [key_points[i]]
     i += 1
 if keyClusterPoints:
-    key_clusters.append(statistics.median_low(keyClusterPoints))
+    key_clusters.append([statistics.median_low(keyClusterPoints), len(keyClusterPoints)])
+
+for i in key_clusters:
+    colors[i[0]] = [1, 0, 0]
+    sizes[i[0]] = 100*i[1]
 
 # show plot
 plt.scatter(0, 0, color=[0, 0, 0], s=500)
