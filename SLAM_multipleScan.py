@@ -14,7 +14,7 @@ ClusterThreshold = 20
 # setup stuff
 fig = plt.figure()
 np.set_printoptions(suppress=True)
-LiDAR_raw_data_file = open("/Users/dhruvachakravarthi/Downloads/erebus-master 3/game/controllers/my_controller/b.txt", "r")
+LiDAR_raw_data_file = open("b.txt", "r")
 
 # reading distance data
 angles = np.arange(0, 2 * np.pi, (2 * np.pi / DataPointsPerScan), dtype=float)
