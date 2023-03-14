@@ -1,9 +1,11 @@
+import numpy
 import numpy as np
 import matplotlib.pyplot as plt
-import math
+import matplotlib.cm as cm
+np.set_printoptions(threshold=np.inf)
 
 # data points collected per 360 rotation
-DataPointsPerScan = DataPointsPerScanAdjust = 512
+DataPointsPerScan = 512
 # minimum distance between other points to be determined outlier
 MinimumOutlierDistance = 3
 # minimum change in angle (in degrees) for key point to be recorded
@@ -20,14 +22,16 @@ LiDAR_raw_data_file = open("b.txt", "r")
 angles = np.arange(0, 2 * np.pi, (2 * np.pi / DataPointsPerScan), dtype=float)
 coords_x = []
 coords_y = []
+colors = []
+distances = []
 for i in range(13):
-    point_distances = np.empty(DataPointsPerScan)
     LiDAR_x, LiDAR_y, LiDAR_yaw = LiDAR_raw_data_file.readline().strip().split(' ')
 
     for j in range(DataPointsPerScan):
-        point_distances[j] = float(LiDAR_raw_data_file.readline().strip())
-        coords_x.append(float(LiDAR_x) + (point_distances[j] * np.cos(-float(LiDAR_yaw) + angles[j])))
-        coords_y.append(float(LiDAR_y) + (point_distances[j] * np.sin(-float(LiDAR_yaw) + angles[j])))
+        distances.append(float(LiDAR_raw_data_file.readline().strip()))
+        coords_x.append(float(LiDAR_x) + (distances[-1] * np.cos(-float(LiDAR_yaw) + angles[j])))
+        coords_y.append(float(LiDAR_y) + (distances[-1] * np.sin(-float(LiDAR_yaw) + angles[j])))
+        colors.append(cm.rainbow(distances[-1]*2))
 
     # show plot
     plt.scatter(float(LiDAR_x), float(LiDAR_y), color=[0, 0, 0], s=500)
@@ -35,7 +39,8 @@ for i in range(13):
 
     LiDAR_raw_data_file.readline()
 
-plt.scatter(coords_x, coords_y, color=[0, 0, 0])
+sort = np.flip(np.argsort(distances))
+plt.scatter(numpy.array(coords_x)[sort], numpy.array(coords_y)[sort], color=numpy.array(colors)[sort])
 plt.gca().invert_yaxis()
 plt.show()
 
