@@ -8,7 +8,7 @@ class TileMap {
 
     public:
         TileMap();
-		std::unordered_map<signed char, std::unordered_map<signed char, Tile>> tiles;
+        std::unordered_map<signed char, std::unordered_map<signed char, Tile>> tiles;
         unsigned short int tileCount;
 
 };
