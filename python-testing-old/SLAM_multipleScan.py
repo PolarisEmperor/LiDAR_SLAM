@@ -24,7 +24,7 @@ coords_x = []
 coords_y = []
 colors = []
 distances = []
-for i in range(13):
+for i in range(1):
     LiDAR_x, LiDAR_y, LiDAR_yaw = LiDAR_raw_data_file.readline().strip().split(' ')
 
     for j in range(DataPointsPerScan):
@@ -43,6 +43,9 @@ sort = np.flip(np.argsort(distances))
 plt.scatter(numpy.array(coords_x)[sort], numpy.array(coords_y)[sort], color=numpy.array(colors)[sort])
 plt.gca().invert_yaxis()
 plt.show()
+
+print(coords_x*100)
+print(max(distances))
 
 # cleanup
 LiDAR_raw_data_file.close()
