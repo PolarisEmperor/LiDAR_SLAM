@@ -8,9 +8,14 @@ class TileMap {
 
     public:
         TileMap();
-        std::unordered_map<signed char, std::unordered_map<signed char, Tile>> tiles;
-        unsigned short int tileCount;
+        Tile& getTile(std::pair<int, int> tile);
+        void createTile(std::pair<int, int> tile, Snapshot snapshot);
+        void addSnapshot(float* LiDAR_scan, float GPSx, float GPSy, float IMUa);
+        bool tileExists(std::pair<int, int> tile);
 
+        std::unordered_map<int, std::unordered_map<int, Tile>> tiles;
+        unsigned short tileCount;
+        unsigned short snapshotCount;
 };
 
 

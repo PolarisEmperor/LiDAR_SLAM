@@ -8,8 +8,12 @@ class Tile {
 
     public:
         Tile();
+        Tile(std::vector<Point> points, bool visited);
+        bool addSnapshotToTile(Snapshot snapshot);
+        static std::pair<int, int> calculateTile(Point point);
+
         std::unordered_set<Snapshot> snapshots;
-        unsigned char tileAccuracy;
+        unsigned short tileAccuracy;
         bool tileVisited;
 
 };

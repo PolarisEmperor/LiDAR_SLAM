@@ -24,11 +24,13 @@ coords_x = []
 coords_y = []
 colors = []
 distances = []
-for i in range(1):
+for i in range(13):
     LiDAR_x, LiDAR_y, LiDAR_yaw = LiDAR_raw_data_file.readline().strip().split(' ')
 
     for j in range(DataPointsPerScan):
         distances.append(float(LiDAR_raw_data_file.readline().strip()))
+        #distances[-1] *= 60000
+        #distances[-1] = int(distances[-1])
         coords_x.append(float(LiDAR_x) + (distances[-1] * np.cos(-float(LiDAR_yaw) + angles[j])))
         coords_y.append(float(LiDAR_y) + (distances[-1] * np.sin(-float(LiDAR_yaw) + angles[j])))
         colors.append(cm.rainbow(distances[-1]*2))
@@ -45,7 +47,8 @@ plt.gca().invert_yaxis()
 plt.show()
 
 print(coords_x*100)
-print(max(distances))
+print(max(coords_x))
+print(min(coords_y))
 
 # cleanup
 LiDAR_raw_data_file.close()
