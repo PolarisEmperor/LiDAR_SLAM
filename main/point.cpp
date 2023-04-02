@@ -1,14 +1,15 @@
 #include <math.h>
-#include "point.hpp"
+#include <iostream>
+#include "point.h"
 
-Point::Point(){
+Point::Point() {
     x = y = 0;
     distance = 0;
     angle = 0;
     visited = false;
 }
 
-Point::Point(float gx, float gy, float ia, float d, float a, bool v){
+Point::Point(float gx, float gy, float ia, float d, float a, bool v) {
     std::pair<float, float> coordinates = CalculateCoordinate(gx, gy, ia, d, a);
     x = coordinates.first;
     y = coordinates.second;
@@ -18,7 +19,7 @@ Point::Point(float gx, float gy, float ia, float d, float a, bool v){
 }
 
 // find absolute coordinates of a point
-std::pair<float, float> Point::CalculateCoordinate(float gx, float gy, float ia, float d, float a){
+std::pair<float, float> Point::CalculateCoordinate(float gx, float gy, float ia, float d, float a) {
     float angle = a - ia;
     float xCoord = (d * cos(angle));
     float yCoord = (d * sin(angle));
