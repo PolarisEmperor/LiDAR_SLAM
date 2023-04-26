@@ -8,9 +8,8 @@ Tile::Tile() {
     tileVisited = false;
 }
 
-Tile::Tile(std::vector<Point> pts, bool v) {
-
-
+Tile::Tile(Snapshot snap) {
+    snapshots.insert(snap);
 }
 
 // returns the tile that a points belongs to
@@ -19,5 +18,6 @@ std::pair<int, int> Tile::calculateTile(Point p) {
 }
 
 bool Tile::addSnapshotToTile(Snapshot s) {
-    return 1;
+    snapshots.insert(s);
+    return true;
 }

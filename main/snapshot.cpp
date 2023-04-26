@@ -15,7 +15,7 @@ Snapshot::Snapshot(std::vector<Point> pts, unsigned short n, bool v) {
     snapAccuracy = calculateSnapshotAccuracy();
 }
 
-bool Snapshot::operator<(const Snapshot& s) {
+bool Snapshot::operator<(const Snapshot& s) const {
     return this->snapNum < s.snapNum;
 }
 

@@ -8,7 +8,7 @@ class Tile {
 
 public:
     Tile();
-    Tile(std::vector<Point> points, bool visited);
+    Tile(Snapshot snapshot);
     bool addSnapshotToTile(Snapshot snapshot);
     static std::pair<int, int> calculateTile(Point point);
 

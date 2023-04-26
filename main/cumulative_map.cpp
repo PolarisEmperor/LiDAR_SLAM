@@ -1,21 +1,31 @@
 #include "cumulative_map.h"
 #include "tile.h"
 #include <math.h>
+#include <unordered_map>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <iostream>
 #define LIDAR_RESOLUTION 512 
 
 TileMap::TileMap() {
     tileCount = 0;
 }
 
-Tile& TileMap::getTile(std::pair<int, int> t) {
+Tile& TileMap::getTile(std::pair<int, int> &t) {
     return tiles[t.first][t.second];
 }
 
-void TileMap::createTile(std::pair<int, int> tile, Snapshot snapshot) {
-    
+void TileMap::createTile(std::pair<int, int> &t, Tile tile) {
+    if (!tiles.count(t.first)){
+        tiles[t.first] = std::unordered_map<int, Tile>();
+    }
+    if (!tiles[t.first].count(t.second)){
+        tiles[t.first][t.second] = tile;
+    }
 }
 
-bool TileMap::tileExists(std::pair<int, int> t) {
+bool TileMap::tileExists(std::pair<int, int> &t) {
     if (tiles.count(t.first)) {
         if (tiles[t.first].count(t.second))
             return true;
@@ -27,7 +37,7 @@ void TileMap::addSnapshot(float* distList, float GPSx, float GPSy, float IMUa) {
     std::vector<Point> pointList;
 
     //convert distance list to vector of points
-    for (auto i = 0; i < LIDAR_RESOLUTION; i++) {
+    for (int i = 0; i < LIDAR_RESOLUTION; i++) {
         if (!isnormal(distList[i]))
             continue;
 
@@ -40,17 +50,17 @@ void TileMap::addSnapshot(float* distList, float GPSx, float GPSy, float IMUa) {
     int start = 0;
     for (int i = 1; i < pointList.size(); i++) {
         if (Tile::calculateTile(pointList[i]) != previousTile) {
-            Snapshot s = Snapshot(std::vector<Point>(pointList.begin() + start, pointList.begin() + (i - 1)), snapshotCount++, false);
+            Snapshot s = Snapshot(std::vector<Point>(pointList.begin() + start, pointList.begin() + (i - 1)), snapshotCount, false);
 
             if (tileExists(previousTile)) {
                 Tile& t = getTile(previousTile);
                 t.addSnapshotToTile(s);
             }
             else {
-                createTile(previousTile, s);
+                createTile(previousTile, Tile(s));
             }
 
-            start = i + 1;
+            start = i;
             previousTile = Tile::calculateTile(pointList[i]);
         }
     }
@@ -59,6 +69,34 @@ void TileMap::addSnapshot(float* distList, float GPSx, float GPSy, float IMUa) {
 }
 
 int main() {
-    printf("bbb\n");
+    std::ifstream file;
+    std::string line;
+    file.open("/Users/dhruvachakravarthi/Documents/a.txt");
+
+    float GPSx, GPSy, IMUa;
+    float* LiDAR = (float*)malloc(LIDAR_RESOLUTION * sizeof(float));
+    
+    std::getline(file, line);
+    std::cout << line << std::endl;
+    GPSx = std::stof(line);
+
+    std::getline(file, line);
+    std::cout << line << std::endl;
+    GPSy = std::stof(line);
+
+    std::getline(file, line);
+    std::cout << line << std::endl;
+    IMUa = std::stof(line);
+
+    for(int i  = 0; i < 512; i++){
+        std::getline(file, line);
+        std::cout << line << std::endl;
+        LiDAR[i] = std::stof(line);
+    }
+    
+    file.close();
+
+    TileMap tm;
+    tm.addSnapshot(LiDAR, GPSx, GPSy, IMUa);
     return 0;
 }

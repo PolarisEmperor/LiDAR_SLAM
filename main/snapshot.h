@@ -9,7 +9,7 @@ class Snapshot {
 public:
     Snapshot();
     Snapshot(std::vector<Point> pointList, unsigned short snapshotNumber, bool snapshotVisited);
-    bool operator<(const Snapshot& snapshot);
+    bool operator<(const Snapshot& snapshot) const;
     float calculateSnapshotAngle();
     unsigned short calculateSnapshotAccuracy();
 
