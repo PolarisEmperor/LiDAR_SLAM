@@ -28,12 +28,12 @@ for i in range(13):
     LiDAR_x, LiDAR_y, LiDAR_yaw = LiDAR_raw_data_file.readline().strip().split(' ')
 
     for j in range(DataPointsPerScan):
-        distances.append(float(LiDAR_raw_data_file.readline().strip()))
-        #distances[-1] *= 60000
-        #distances[-1] = int(distances[-1])
-        coords_x.append(float(LiDAR_x) + (distances[-1] * np.cos(-float(LiDAR_yaw) + angles[j])))
-        coords_y.append(float(LiDAR_y) + (distances[-1] * np.sin(-float(LiDAR_yaw) + angles[j])))
-        colors.append(cm.rainbow(distances[-1]*2))
+        dist = float(LiDAR_raw_data_file.readline().strip())
+        if dist < 0.175:
+            distances.append(dist)
+            coords_x.append(float(LiDAR_x) + (distances[-1] * np.cos(-float(LiDAR_yaw) + angles[j])))
+            coords_y.append(float(LiDAR_y) + (distances[-1] * np.sin(-float(LiDAR_yaw) + angles[j])))
+            colors.append(cm.rainbow(distances[-1]*2))
 
     # show plot
     plt.scatter(float(LiDAR_x), float(LiDAR_y), color=[0, 0, 0], s=500)

@@ -12,6 +12,7 @@ public:
     bool operator<(const Snapshot& snapshot) const;
     float calculateSnapshotAngle();
     unsigned short calculateSnapshotAccuracy();
+    void addPoint(Point point);
 
     std::vector<Point> points;
     unsigned short snapNum;

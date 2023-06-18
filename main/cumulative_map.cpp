@@ -48,6 +48,7 @@ void TileMap::addSnapshot(float* distList, float GPSx, float GPSy, float IMUa) {
     //TODO - check backward: 512 and 0 may be part of same snap
     std::pair<int, int> previousTile = Tile::calculateTile(pointList[0]);
     int start = 0;
+    int tTime = 0;
     for (int i = 1; i < pointList.size(); i++) {
         if (Tile::calculateTile(pointList[i]) != previousTile) {
             Snapshot s = Snapshot(std::vector<Point>(pointList.begin() + start, pointList.begin() + (i - 1)), snapshotCount, false);
@@ -90,13 +91,14 @@ int main() {
 
     for(int i  = 0; i < 512; i++){
         std::getline(file, line);
-        std::cout << line << std::endl;
+        //std::cout << line << std::endl;
         LiDAR[i] = std::stof(line);
     }
     
     file.close();
 
     TileMap tm;
+    tm.addSnapshot(LiDAR, GPSx, GPSy, IMUa);
     tm.addSnapshot(LiDAR, GPSx, GPSy, IMUa);
     return 0;
 }

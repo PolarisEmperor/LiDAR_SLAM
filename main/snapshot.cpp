@@ -34,3 +34,7 @@ unsigned short Snapshot::calculateSnapshotAccuracy() {
     }
     return accuracy / points.size();
 }
+
+void Snapshot::addPoint(Point p){
+    points.push_back(p);
+}
