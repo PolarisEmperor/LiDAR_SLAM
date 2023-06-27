@@ -68,37 +68,3 @@ void TileMap::addSnapshot(float* distList, float GPSx, float GPSy, float IMUa) {
 
     snapshotCount++;
 }
-
-int main() {
-    std::ifstream file;
-    std::string line;
-    file.open("/Users/dhruvachakravarthi/Documents/a.txt");
-
-    float GPSx, GPSy, IMUa;
-    float* LiDAR = (float*)malloc(LIDAR_RESOLUTION * sizeof(float));
-    
-    std::getline(file, line);
-    std::cout << line << std::endl;
-    GPSx = std::stof(line);
-
-    std::getline(file, line);
-    std::cout << line << std::endl;
-    GPSy = std::stof(line);
-
-    std::getline(file, line);
-    std::cout << line << std::endl;
-    IMUa = std::stof(line);
-
-    for(int i  = 0; i < 512; i++){
-        std::getline(file, line);
-        //std::cout << line << std::endl;
-        LiDAR[i] = std::stof(line);
-    }
-    
-    file.close();
-
-    TileMap tm;
-    tm.addSnapshot(LiDAR, GPSx, GPSy, IMUa);
-    tm.addSnapshot(LiDAR, GPSx, GPSy, IMUa);
-    return 0;
-}

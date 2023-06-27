@@ -16,6 +16,7 @@ MinimumAngleChange = 50
 fig = plt.figure()
 np.set_printoptions(suppress=True)
 
+"""
 # reading distance data
 LiDAR_raw_data_file = open("room1/data1.txt", "r")
 point_distances = np.empty(DataPointsPerScan)
@@ -133,11 +134,19 @@ if keyClusterPoints:
 for i in key_clusters:
     colors[i[0]] = [1, 0, 0]
     sizes[i[0]] = 100*i[1]
+"""
+point_data_x = []
+point_data_y = []
+LiDAR_raw_data_file = open("room1/data1.txt", "r")
+for i in range(757):
+    xy = LiDAR_raw_data_file.readline().split()
+    point_data_x.append(float(xy[0]))
+    point_data_y.append(float(xy[1]))
 
 # show plot
 plt.scatter(0, 0, color=[0, 0, 0], s=500)
 plt.scatter(0, 0, color=[0, 1, 1], s=300)
-plt.scatter(point_data_x, point_data_y, c=colors, s=sizes)
+plt.scatter(point_data_x, point_data_y)
 plt.show()
 
 # cleanup
